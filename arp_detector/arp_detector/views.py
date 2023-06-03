@@ -1,14 +1,13 @@
 from django.shortcuts import render
 import scapy.all
-
 from scapy.layers.inet import *
-from get_nic import getnic
-from scapy.layers.l2 import ARP
 from scapy.sendrecv import sniff
+from scapy.layers.l2 import ARP, Ether
 
 
 def home(request):
-    sniff_("wlan0")
+
+    sniff_('Wi-Fi 3')
 
     return render(request, 'home.html')
 
@@ -26,9 +25,9 @@ def sniff_(interface):
 
 
 def process_sniffed_packet(packet):
-    if packet[ARP].op == 2 and packet.haslayer(ARP):
-        real_mac = get_mac_address(packet[ARP].psrc)
-        resp_mac = packet[ARP].hwsrc
+    if packet[ARP].op == 2 and packet.haslayer(scapy.layers.l2.ARP):
+        real_mac = get_mac_address(packet[scapy.layers.l2.ARP].psrc)
+        resp_mac = packet[scapy.layers.l2.ARP].hwsrc
 
         if real_mac != resp_mac:
             print('You are under attack!')
